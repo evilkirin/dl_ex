@@ -1,0 +1,65 @@
+# https://www.cnblogs.com/similarface/p/6366083.html
+
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+# 数据来源 http://www-bcf.usc.edu/~gareth/ISL/Advertising.csv
+data = pd.read_csv('./Advertising.csv')
+print(data.head())
+
+x = data[['TV', 'radio', 'newspaper']]
+y = data['sales']
+
+plt.plot(data['TV'], y, 'ro', label='TV')
+plt.plot(data['radio'], y, 'g^', label='Radio')
+plt.plot(data['newspaper'], y, 'b*', label='Newspaer')  # plt.legend(loc='lower right')
+plt.grid()
+plt.show()
+
+plt.figure(figsize=(9, 12))
+plt.subplot(311)
+plt.plot(data['TV'], y, 'ro')
+plt.title('TV')
+plt.grid()
+plt.subplot(312)
+plt.plot(data['radio'], y, 'g^')
+plt.title('radio')
+plt.grid()
+plt.subplot(313)
+plt.plot(data['newspaper'], y, 'b*')
+plt.title('newspaper')
+plt.grid()
+plt.tight_layout()
+plt.show()
+
+# 构建特征向量
+feature_cols = ['TV', 'radio', 'newspaper']
+# 特征向量数据
+X = data[feature_cols]
+# 目标结果
+y = data['sales']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=1)
+print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
+
+linereg = LinearRegression()
+model = linereg.fit(X_train, y_train)
+
+print(model)
+
+# linereg.intercept_
+
+y_predict = linereg.predict(X_test)
+sum_mean = 0
+for i in range(len(y_predict)):
+    sum_mean += (y_predict[i] - y_test.values[i]) ** 2
+
+plt.plot(range(len(y_predict)), y_predict, 'b', label="predict")
+plt.plot(range(len(y_predict)), y_test, 'r', label="test")
+
+plt.legend(loc="upper right")
+plt.xlabel("the number of sales")
+plt.ylabel('value of sales')
+plt.show()
